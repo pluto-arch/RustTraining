@@ -81,7 +81,7 @@ fn main() {
 
 ----
 # Rust slices
-- Rust references can be used create subsets of arrays
+- Rust references can be used to create subsets of arrays
     - Unlike arrays, which have a static fixed length determined at compile time, slices can be of arbitrary size. Internally, slices are implemented as a "fat-pointer" that contains the length of the slice and a pointer to the starting element in the original array
 ```rust
 fn main() {
