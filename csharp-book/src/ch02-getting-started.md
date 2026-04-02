@@ -1,43 +1,43 @@
-## Installation and Setup
+## 安装与配置
 
-> **What you'll learn:** How to install Rust and set up your IDE, the Cargo build system vs MSBuild/NuGet,
-> your first Rust program compared to C#, and how to read command-line input.
+> **你将学到：** 如何安装 Rust 并配置 IDE，Cargo 构建系统与 MSBuild/NuGet 的对比，
+> 你的第一个 Rust 程序与 C# 的对比，以及如何读取命令行输入。
 >
-> **Difficulty:** 🟢 Beginner
+> **难度：** 🟢 初级
 
-### Installing Rust
+### 安装 Rust
 ```bash
-# Install Rust (works on Windows, macOS, Linux)
+# 安装 Rust（适用于 Windows、macOS、Linux）
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# On Windows, you can also download from: https://rustup.rs/
+# 在 Windows 上，也可以从以下地址下载：https://rustup.rs/
 ```
 
-### Rust Tools vs C# Tools
-| C# Tool | Rust Equivalent | Purpose |
+### Rust 工具 vs C# 工具
+| C# 工具 | Rust 对应工具 | 用途 |
 |---------|----------------|---------|
-| `dotnet new` | `cargo new` | Create new project |
-| `dotnet build` | `cargo build` | Compile project |
-| `dotnet run` | `cargo run` | Run project |
-| `dotnet test` | `cargo test` | Run tests |
-| NuGet | Crates.io | Package repository |
-| MSBuild | Cargo | Build system |
+| `dotnet new` | `cargo new` | 创建新项目 |
+| `dotnet build` | `cargo build` | 编译项目 |
+| `dotnet run` | `cargo run` | 运行项目 |
+| `dotnet test` | `cargo test` | 运行测试 |
+| NuGet | Crates.io | 包仓库 |
+| MSBuild | Cargo | 构建系统 |
 | Visual Studio | VS Code + rust-analyzer | IDE |
 
-### IDE Setup
-1. **VS Code** (Recommended for beginners)
-   - Install "rust-analyzer" extension
-   - Install "CodeLLDB" for debugging
+### IDE 配置
+1. **VS Code**（推荐初学者使用）
+   - 安装"rust-analyzer"扩展
+   - 安装"CodeLLDB"用于调试
 
-2. **Visual Studio** (Windows)
-   - Install Rust support extension
+2. **Visual Studio**（Windows）
+   - 安装 Rust 支持扩展
 
-3. **JetBrains RustRover** (Full IDE)
-   - Similar to Rider for C#
+3. **JetBrains RustRover**（完整 IDE）
+   - 类似于 C# 的 Rider
 
 ***
 
-## Your First Rust Program
+## 你的第一个 Rust 程序
 
 ### C# Hello World
 ```csharp
@@ -64,26 +64,26 @@ fn main() {
 }
 ```
 
-### Key Differences for C# Developers
-1. **No classes required** - Functions can exist at the top level
-2. **No namespaces** - Uses module system instead
-3. **`println!` is a macro** - Notice the `!` 
-4. **Semicolons matter** - Omitting the trailing semicolon turns a statement into a return expression
-5. **No explicit return type** - `main` returns `()` (unit type)
+### C# 开发者需注意的关键差异
+1. **不需要类** - 函数可以直接存在于顶层
+2. **没有命名空间** - 使用模块系统代替
+3. **`println!` 是一个宏** - 注意感叹号 `!`
+4. **分号很重要** - 省略末尾分号会将语句转变为返回表达式
+5. **无需显式返回类型** - `main` 返回 `()`（单元类型）
 
-### Creating Your First Project
+### 创建你的第一个项目
 ```bash
-# Create new project (like 'dotnet new console')
+# 创建新项目（类似 'dotnet new console'）
 cargo new hello_rust
 cd hello_rust
 
-# Project structure created:
+# 创建的项目结构：
 # hello_rust/
-# ├── Cargo.toml      (like .csproj file)
+# ├── Cargo.toml      （类似 .csproj 文件）
 # └── src/
-#     └── main.rs     (like Program.cs)
+#     └── main.rs     （类似 Program.cs）
 
-# Run the project (like 'dotnet run')
+# 运行项目（类似 'dotnet run'）
 cargo run
 ```
 
@@ -91,7 +91,7 @@ cargo run
 
 ## Cargo vs NuGet/MSBuild
 
-### Project Configuration
+### 项目配置
 
 **C# (.csproj)**
 ```xml
@@ -114,36 +114,36 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serde_json = "1.0"    # Like Newtonsoft.Json
-log = "0.4"           # Like Serilog
+serde_json = "1.0"    # 类似 Newtonsoft.Json
+log = "0.4"           # 类似 Serilog
 ```
 
-### Common Cargo Commands
+### 常用 Cargo 命令
 ```bash
-# Create new project
+# 创建新项目
 cargo new my_project
-cargo new my_project --lib  # Create library project
+cargo new my_project --lib  # 创建库项目
 
-# Build and run
-cargo build          # Like 'dotnet build'
-cargo run            # Like 'dotnet run'
-cargo test           # Like 'dotnet test'
+# 构建与运行
+cargo build          # 类似 'dotnet build'
+cargo run            # 类似 'dotnet run'
+cargo test           # 类似 'dotnet test'
 
-# Package management
-cargo add serde      # Add dependency (like 'dotnet add package')
-cargo update         # Update dependencies
+# 包管理
+cargo add serde      # 添加依赖（类似 'dotnet add package'）
+cargo update         # 更新依赖
 
-# Release build
-cargo build --release  # Optimized build
-cargo run --release    # Run optimized version
+# 发布构建
+cargo build --release  # 优化构建
+cargo run --release    # 运行优化版本
 
-# Documentation
-cargo doc --open     # Generate and open docs
+# 文档
+cargo doc --open     # 生成并打开文档
 ```
 
-### Workspace vs Solution
+### 工作区 vs 解决方案
 
-**C# Solution (.sln)**
+**C# 解决方案 (.sln)**
 ```text
 MySolution/
 ├── MySolution.sln
@@ -155,7 +155,7 @@ MySolution/
     └── Tests.csproj
 ```
 
-**Rust Workspace (Cargo.toml)**
+**Rust 工作区 (Cargo.toml)**
 ```toml
 [workspace]
 members = [
@@ -167,18 +167,18 @@ members = [
 
 ***
 
-## Reading Input and CLI Arguments
+## 读取输入与命令行参数
 
-Every C# developer knows `Console.ReadLine()`. Here's how to handle user input, environment variables, and command-line arguments in Rust.
+每个 C# 开发者都熟悉 `Console.ReadLine()`。以下是在 Rust 中处理用户输入、环境变量和命令行参数的方式。
 
-### Console Input
+### 控制台输入
 ```csharp
-// C# — reading user input
+// C# — 读取用户输入
 Console.Write("Enter your name: ");
-string? name = Console.ReadLine();  // Returns string? in .NET 6+
+string? name = Console.ReadLine();  // 在 .NET 6+ 中返回 string?
 Console.WriteLine($"Hello, {name}!");
 
-// Parsing input
+// 解析输入
 Console.Write("Enter a number: ");
 if (int.TryParse(Console.ReadLine(), out int number))
 {
@@ -194,16 +194,16 @@ else
 use std::io::{self, Write};
 
 fn main() {
-    // Reading a line of input
+    // 读取一行输入
     print!("Enter your name: ");
-    io::stdout().flush().unwrap(); // flush because print! doesn't auto-flush
+    io::stdout().flush().unwrap(); // 刷新缓冲区，因为 print! 不会自动刷新
 
     let mut name = String::new();
     io::stdin().read_line(&mut name).expect("Failed to read line");
-    let name = name.trim(); // remove trailing newline
+    let name = name.trim(); // 去除末尾换行符
     println!("Hello, {name}!");
 
-    // Parsing input
+    // 解析输入
     print!("Enter a number: ");
     io::stdout().flush().unwrap();
 
@@ -216,9 +216,9 @@ fn main() {
 }
 ```
 
-### Command-Line Arguments
+### 命令行参数
 ```csharp
-// C# — reading CLI args
+// C# — 读取命令行参数
 static void Main(string[] args)
 {
     if (args.Length < 1)
@@ -236,11 +236,11 @@ use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    //  args[0] = program name (like C#'s Assembly name)
-    //  args[1..] = actual arguments
+    //  args[0] = 程序名称（类似 C# 的程序集名称）
+    //  args[1..] = 实际参数
 
     if args.len() < 2 {
-        eprintln!("Usage: {} <filename>", args[0]); // eprintln! → stderr
+        eprintln!("Usage: {} <filename>", args[0]); // eprintln! → 标准错误输出
         std::process::exit(1);
     }
     let filename = &args[1];
@@ -248,7 +248,7 @@ fn main() {
 }
 ```
 
-### Environment Variables
+### 环境变量
 ```csharp
 // C#
 string dbUrl = Environment.GetEnvironmentVariable("DATABASE_URL") ?? "localhost";
@@ -258,12 +258,12 @@ string dbUrl = Environment.GetEnvironmentVariable("DATABASE_URL") ?? "localhost"
 use std::env;
 
 let db_url = env::var("DATABASE_URL").unwrap_or_else(|_| "localhost".to_string());
-// env::var returns Result<String, VarError> — no nulls!
+// env::var 返回 Result<String, VarError> — 没有空值！
 ```
 
-### Production CLI Apps with `clap`
+### 使用 `clap` 构建生产级 CLI 应用
 
-For anything beyond trivial argument parsing, use the **`clap`** crate — it's the Rust equivalent of `System.CommandLine` or libraries like `CommandLineParser`.
+对于任何超出简单参数解析的需求，请使用 **`clap`** crate——它是 `System.CommandLine` 或 `CommandLineParser` 等库的 Rust 等价物。
 
 ```toml
 # Cargo.toml
@@ -274,29 +274,29 @@ clap = { version = "4", features = ["derive"] }
 ```rust
 use clap::Parser;
 
-/// A simple file processor — this doc comment becomes the help text
+/// 一个简单的文件处理器——此文档注释会成为帮助文本
 #[derive(Parser, Debug)]
 #[command(name = "processor", version, about)]
 struct Args {
-    /// Input file to process
+    /// 要处理的输入文件
     #[arg(short, long)]
     input: String,
 
-    /// Output file (defaults to stdout)
+    /// 输出文件（默认为标准输出）
     #[arg(short, long)]
     output: Option<String>,
 
-    /// Enable verbose logging
+    /// 启用详细日志
     #[arg(short, long, default_value_t = false)]
     verbose: bool,
 
-    /// Number of worker threads
+    /// 工作线程数量
     #[arg(short = 'j', long, default_value_t = 4)]
     threads: usize,
 }
 
 fn main() {
-    let args = Args::parse(); // auto-parses, validates, generates --help
+    let args = Args::parse(); // 自动解析、验证并生成 --help
 
     if args.verbose {
         println!("Input:   {}", args.input);
@@ -304,12 +304,12 @@ fn main() {
         println!("Threads: {}", args.threads);
     }
 
-    // Use args.input, args.output, etc.
+    // 使用 args.input、args.output 等
 }
 ```
 
 ```bash
-# Auto-generated help:
+# 自动生成的帮助信息：
 $ processor --help
 A simple file processor
 
@@ -325,7 +325,7 @@ Options:
 ```
 
 ```csharp
-// C# equivalent with System.CommandLine (more boilerplate):
+// C# 等效代码（使用 System.CommandLine，样板代码较多）：
 var inputOption = new Option<string>("--input", "Input file") { IsRequired = true };
 var verboseOption = new Option<bool>("--verbose", "Enable verbose logging");
 var rootCommand = new RootCommand("A simple file processor");
@@ -333,16 +333,15 @@ rootCommand.AddOption(inputOption);
 rootCommand.AddOption(verboseOption);
 rootCommand.SetHandler((input, verbose) => { /* ... */ }, inputOption, verboseOption);
 await rootCommand.InvokeAsync(args);
-// clap's derive macro approach is more concise and type-safe
+// clap 的 derive 宏方式更简洁且类型安全
 ```
 
-| C# | Rust | Notes |
+| C# | Rust | 说明 |
 |----|------|-------|
-| `Console.ReadLine()` | `io::stdin().read_line(&mut buf)` | Must provide buffer, returns `Result` |
-| `int.TryParse(s, out n)` | `s.parse::<i32>()` | Returns `Result<i32, ParseIntError>` |
-| `args[0]` | `env::args().nth(1)` | Rust args[0] = program name |
-| `Environment.GetEnvironmentVariable` | `env::var("KEY")` | Returns `Result`, not nullable |
-| `System.CommandLine` | `clap` | Derive-based, auto-generates help |
+| `Console.ReadLine()` | `io::stdin().read_line(&mut buf)` | 必须提供缓冲区，返回 `Result` |
+| `int.TryParse(s, out n)` | `s.parse::<i32>()` | 返回 `Result<i32, ParseIntError>` |
+| `args[0]` | `env::args().nth(1)` | Rust 的 args[0] 是程序名称 |
+| `Environment.GetEnvironmentVariable` | `env::var("KEY")` | 返回 `Result`，不可为空 |
+| `System.CommandLine` | `clap` | 基于 derive 宏，自动生成帮助信息 |
 
 ***
-
