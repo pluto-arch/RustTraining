@@ -1,117 +1,117 @@
-## `Vec<T>` vs `List<T>`
+## `Vec<T>` 与 `List<T>`
 
-> **What you'll learn:** `Vec<T>` vs `List<T>`, `HashMap` vs `Dictionary`, safe access patterns
-> (why Rust returns `Option` instead of throwing), and the ownership implications of collections.
+> **本章要点：** `Vec<T>` 与 `List<T>`、`HashMap` 与 `Dictionary` 的对比、安全访问模式
+> （为什么 Rust 返回 `Option` 而非抛出异常），以及集合的所有权影响。
 >
-> **Difficulty:** 🟢 Beginner
+> **难度：** 🟢 初级
 
-`Vec<T>` is Rust's equivalent to C#'s `List<T>`, but with ownership semantics.
+`Vec<T>` 是 Rust 对应 C# `List<T>` 的类型，但带有所有权语义。
 
 ### C# `List<T>`
 ```csharp
-// C# List<T> - Reference type, heap allocated
+// C# List<T> - 引用类型，堆分配
 var numbers = new List<int>();
 numbers.Add(1);
 numbers.Add(2);
 numbers.Add(3);
 
-// Pass to method - reference is copied
+// 传递给方法 — 复制引用
 ProcessList(numbers);
-Console.WriteLine(numbers.Count);  // Still accessible
+Console.WriteLine(numbers.Count);  // 仍然可访问
 
 void ProcessList(List<int> list)
 {
-    list.Add(4);  // Modifies original list
+    list.Add(4);  // 修改原始列表
     Console.WriteLine($"Count in method: {list.Count}");
 }
 ```
 
 ### Rust `Vec<T>`
 ```rust
-// Rust Vec<T> - Owned type, heap allocated
+// Rust Vec<T> - 拥有所有权的类型，堆分配
 let mut numbers = Vec::new();
 numbers.push(1);
 numbers.push(2);
 numbers.push(3);
 
-// Method that takes ownership
+// 获取所有权的方法
 process_vec(numbers);
-// println!("{:?}", numbers);  // ❌ Error: numbers was moved
+// println!("{:?}", numbers);  // ❌ 错误：numbers 已被移动
 
-// Method that borrows
-let mut numbers = vec![1, 2, 3];  // vec! macro for convenience
+// 借用的方法
+let mut numbers = vec![1, 2, 3];  // vec! 宏更便捷
 process_vec_borrowed(&mut numbers);
-println!("{:?}", numbers);  // ✅ Still accessible
+println!("{:?}", numbers);  // ✅ 仍然可访问
 
-fn process_vec(mut vec: Vec<i32>) {  // Takes ownership
+fn process_vec(mut vec: Vec<i32>) {  // 获取所有权
     vec.push(4);
     println!("Count in method: {}", vec.len());
-    // vec is dropped here
+    // vec 在此被销毁
 }
 
-fn process_vec_borrowed(vec: &mut Vec<i32>) {  // Borrows mutably
+fn process_vec_borrowed(vec: &mut Vec<i32>) {  // 可变借用
     vec.push(4);
     println!("Count in method: {}", vec.len());
 }
 ```
 
-### Creating and Initializing Vectors
+### 创建和初始化向量
 ```csharp
-// C# List initialization
+// C# List 初始化
 var numbers = new List<int> { 1, 2, 3, 4, 5 };
 var empty = new List<int>();
-var sized = new List<int>(10);  // Initial capacity
+var sized = new List<int>(10);  // 初始容量
 
-// From other collections
+// 从其他集合创建
 var fromArray = new List<int>(new[] { 1, 2, 3 });
 ```
 
 ```rust
-// Rust Vec initialization
-let numbers = vec![1, 2, 3, 4, 5];  // vec! macro
-let empty: Vec<i32> = Vec::new();   // Type annotation needed for empty
-let sized = Vec::with_capacity(10); // Pre-allocate capacity
+// Rust Vec 初始化
+let numbers = vec![1, 2, 3, 4, 5];  // vec! 宏
+let empty: Vec<i32> = Vec::new();   // 空 Vec 需要类型注解
+let sized = Vec::with_capacity(10); // 预分配容量
 
-// From iterator
+// 从迭代器创建
 let from_range: Vec<i32> = (1..=5).collect();
 let from_array = vec![1, 2, 3];
 ```
 
-### Common Operations Comparison
+### 常用操作对比
 ```csharp
-// C# List operations
+// C# List 操作
 var list = new List<int> { 1, 2, 3 };
 
-list.Add(4);                    // Add element
-list.Insert(0, 0);              // Insert at index
-list.Remove(2);                 // Remove first occurrence
-list.RemoveAt(1);               // Remove at index
-list.Clear();                   // Remove all
+list.Add(4);                    // 添加元素
+list.Insert(0, 0);              // 在索引处插入
+list.Remove(2);                 // 删除第一个匹配项
+list.RemoveAt(1);               // 删除指定索引处的元素
+list.Clear();                   // 清空所有元素
 
-int first = list[0];            // Index access
-int count = list.Count;         // Get count
-bool contains = list.Contains(3); // Check if contains
+int first = list[0];            // 索引访问
+int count = list.Count;         // 获取数量
+bool contains = list.Contains(3); // 检查是否包含
 ```
 
 ```rust
-// Rust Vec operations
+// Rust Vec 操作
 let mut vec = vec![1, 2, 3];
 
-vec.push(4);                    // Add element
-vec.insert(0, 0);               // Insert at index
-vec.retain(|&x| x != 2);        // Remove elements (functional style)
-vec.remove(1);                  // Remove at index
-vec.clear();                    // Remove all
+vec.push(4);                    // 添加元素
+vec.insert(0, 0);               // 在索引处插入
+vec.retain(|&x| x != 2);        // 删除元素（函数式风格）
+vec.remove(1);                  // 删除指定索引处的元素
+vec.clear();                    // 清空所有元素
 
-let first = vec[0];             // Index access (panics if out of bounds)
-let safe_first = vec.get(0);    // Safe access, returns Option<&T>
-let count = vec.len();          // Get count
-let contains = vec.contains(&3); // Check if contains
+let first = vec[0];             // 索引访问（越界时 panic）
+let safe_first = vec.get(0);    // 安全访问，返回 Option<&T>
+let count = vec.len();          // 获取数量
+let contains = vec.contains(&3); // 检查是否包含
 ```
 
-### Safe Access Patterns
+### 安全访问模式
 ```csharp
-// C# - Exception-based bounds checking
+// C# - 基于异常的边界检查
 public int SafeAccess(List<int> list, int index)
 {
     try
@@ -120,27 +120,27 @@ public int SafeAccess(List<int> list, int index)
     }
     catch (ArgumentOutOfRangeException)
     {
-        return -1;  // Default value
+        return -1;  // 默认值
     }
 }
 ```
 
 ```rust
-// Rust - Option-based safe access
+// Rust - 基于 Option 的安全访问
 fn safe_access(vec: &[i32], index: usize) -> Option<i32> {
-    vec.get(index).copied()  // Returns Option<i32>
+    vec.get(index).copied()  // 返回 Option<i32>
 }
 
 fn main() {
     let vec = vec![1, 2, 3];
     
-    // Safe access patterns
+    // 安全访问模式
     match vec.get(10) {
         Some(value) => println!("Value: {}", value),
         None => println!("Index out of bounds"),
     }
     
-    // Or with unwrap_or
+    // 或使用 unwrap_or
     let value = vec.get(10).copied().unwrap_or(-1);
     println!("Value: {}", value);
 }
@@ -148,9 +148,9 @@ fn main() {
 
 ***
 
-## HashMap vs Dictionary
+## HashMap 与 Dictionary
 
-HashMap is Rust's equivalent to C#'s `Dictionary<K,V>`.
+HashMap 是 Rust 对应 C# `Dictionary<K,V>` 的类型。
 
 ### C# Dictionary
 ```csharp
@@ -162,11 +162,11 @@ var scores = new Dictionary<string, int>
     ["Charlie"] = 92
 };
 
-// Add/Update
+// 添加/更新
 scores["Dave"] = 78;
-scores["Alice"] = 105;  // Update existing
+scores["Alice"] = 105;  // 更新已有项
 
-// Safe access
+// 安全访问
 if (scores.TryGetValue("Eve", out int score))
 {
     Console.WriteLine($"Eve's score: {score}");
@@ -176,7 +176,7 @@ else
     Console.WriteLine("Eve not found");
 }
 
-// Iteration
+// 迭代
 foreach (var kvp in scores)
 {
     Console.WriteLine($"{kvp.Key}: {kvp.Value}");
@@ -187,181 +187,181 @@ foreach (var kvp in scores)
 ```rust
 use std::collections::HashMap;
 
-// Create and initialize HashMap
+// 创建并初始化 HashMap
 let mut scores = HashMap::new();
 scores.insert("Alice".to_string(), 100);
 scores.insert("Bob".to_string(), 85);
 scores.insert("Charlie".to_string(), 92);
 
-// Or use from iterator
+// 或使用迭代器创建
 let scores: HashMap<String, i32> = [
     ("Alice".to_string(), 100),
     ("Bob".to_string(), 85),
     ("Charlie".to_string(), 92),
 ].into_iter().collect();
 
-// Add/Update
-let mut scores = scores;  // Make mutable
+// 添加/更新
+let mut scores = scores;  // 使其可变
 scores.insert("Dave".to_string(), 78);
-scores.insert("Alice".to_string(), 105);  // Update existing
+scores.insert("Alice".to_string(), 105);  // 更新已有项
 
-// Safe access
+// 安全访问
 match scores.get("Eve") {
     Some(score) => println!("Eve's score: {}", score),
     None => println!("Eve not found"),
 }
 
-// Iteration
+// 迭代
 for (name, score) in &scores {
     println!("{}: {}", name, score);
 }
 ```
 
-### HashMap Operations
+### HashMap 操作
 ```csharp
-// C# Dictionary operations
+// C# Dictionary 操作
 var dict = new Dictionary<string, int>();
 
-dict["key"] = 42;                    // Insert/update
-bool exists = dict.ContainsKey("key"); // Check existence
-bool removed = dict.Remove("key");    // Remove
-dict.Clear();                        // Clear all
+dict["key"] = 42;                    // 插入/更新
+bool exists = dict.ContainsKey("key"); // 检查是否存在
+bool removed = dict.Remove("key");    // 删除
+dict.Clear();                        // 清空所有
 
-// Get with default
+// 获取带默认值
 int value = dict.GetValueOrDefault("missing", 0);
 ```
 
 ```rust
 use std::collections::HashMap;
 
-// Rust HashMap operations
+// Rust HashMap 操作
 let mut map = HashMap::new();
 
-map.insert("key".to_string(), 42);   // Insert/update
-let exists = map.contains_key("key"); // Check existence
-let removed = map.remove("key");      // Remove, returns Option<V>
-map.clear();                         // Clear all
+map.insert("key".to_string(), 42);   // 插入/更新
+let exists = map.contains_key("key"); // 检查是否存在
+let removed = map.remove("key");      // 删除，返回 Option<V>
+map.clear();                         // 清空所有
 
-// Entry API for advanced operations
+// Entry API 用于高级操作
 let mut map = HashMap::new();
-map.entry("key".to_string()).or_insert(42);  // Insert if not exists
-map.entry("key".to_string()).and_modify(|v| *v += 1); // Modify if exists
+map.entry("key".to_string()).or_insert(42);  // 不存在则插入
+map.entry("key".to_string()).and_modify(|v| *v += 1); // 存在则修改
 
-// Get with default
+// 获取带默认值
 let value = map.get("missing").copied().unwrap_or(0);
 ```
 
-### Ownership with HashMap Keys and Values
+### HashMap 键和值的所有权
 ```rust
-// Understanding ownership with HashMap
+// 理解 HashMap 的所有权
 fn ownership_example() {
     let mut map = HashMap::new();
     
-    // String keys and values are moved into the map
+    // String 类型的键和值会被移动进 map
     let key = String::from("name");
     let value = String::from("Alice");
     
     map.insert(key, value);
-    // println!("{}", key);   // ❌ Error: key was moved
-    // println!("{}", value); // ❌ Error: value was moved
+    // println!("{}", key);   // ❌ 错误：key 已被移动
+    // println!("{}", value); // ❌ 错误：value 已被移动
     
-    // Access via references
+    // 通过引用访问
     if let Some(name) = map.get("name") {
-        println!("Name: {}", name);  // Borrowing the value
+        println!("Name: {}", name);  // 借用该值
     }
 }
 
-// Using &str keys (no ownership transfer)
+// 使用 &str 键（不转移所有权）
 fn string_slice_keys() {
     let mut map = HashMap::new();
     
-    map.insert("name", "Alice");     // &str keys and values
+    map.insert("name", "Alice");     // &str 键和值
     map.insert("age", "30");
     
-    // No ownership issues with string literals
+    // 字符串字面量无所有权问题
     println!("Name exists: {}", map.contains_key("name"));
 }
 ```
 
 ***
 
-## Working with Collections
+## 使用集合
 
-### Iteration Patterns
+### 迭代模式
 ```csharp
-// C# iteration patterns
+// C# 迭代模式
 var numbers = new List<int> { 1, 2, 3, 4, 5 };
 
-// For loop with index
+// 带索引的 for 循环
 for (int i = 0; i < numbers.Count; i++)
 {
     Console.WriteLine($"Index {i}: {numbers[i]}");
 }
 
-// Foreach loop
+// foreach 循环
 foreach (int num in numbers)
 {
     Console.WriteLine(num);
 }
 
-// LINQ methods
+// LINQ 方法
 var doubled = numbers.Select(x => x * 2).ToList();
 var evens = numbers.Where(x => x % 2 == 0).ToList();
 ```
 
 ```rust
-// Rust iteration patterns
+// Rust 迭代模式
 let numbers = vec![1, 2, 3, 4, 5];
 
-// For loop with index
+// 带索引的 for 循环
 for (i, num) in numbers.iter().enumerate() {
     println!("Index {}: {}", i, num);
 }
 
-// For loop over values
-for num in &numbers {  // Borrow each element
+// 遍历值
+for num in &numbers {  // 借用每个元素
     println!("{}", num);
 }
 
-// Iterator methods (like LINQ)
+// 迭代器方法（类似 LINQ）
 let doubled: Vec<i32> = numbers.iter().map(|x| x * 2).collect();
 let evens: Vec<i32> = numbers.iter().filter(|&x| x % 2 == 0).cloned().collect();
 
-// Or more efficiently, consuming iterator
+// 或使用消耗型迭代器（更高效）
 let doubled: Vec<i32> = numbers.into_iter().map(|x| x * 2).collect();
 ```
 
-### Iterator vs IntoIterator vs Iter
+### Iterator 与 IntoIterator 与 Iter
 ```rust
-// Understanding different iteration methods
+// 理解不同的迭代方式
 fn iteration_methods() {
     let vec = vec![1, 2, 3, 4, 5];
     
-    // 1. iter() - borrows elements (&T)
+    // 1. iter() - 借用元素（&T）
     for item in vec.iter() {
-        println!("{}", item);  // item is &i32
+        println!("{}", item);  // item 类型为 &i32
     }
-    // vec is still usable here
+    // vec 仍然可用
     
-    // 2. into_iter() - takes ownership (T)
+    // 2. into_iter() - 获取所有权（T）
     for item in vec.into_iter() {
-        println!("{}", item);  // item is i32
+        println!("{}", item);  // item 类型为 i32
     }
-    // vec is no longer usable here
+    // vec 不再可用
     
     let mut vec = vec![1, 2, 3, 4, 5];
     
-    // 3. iter_mut() - mutable borrows (&mut T)
+    // 3. iter_mut() - 可变借用（&mut T）
     for item in vec.iter_mut() {
-        *item *= 2;  // item is &mut i32
+        *item *= 2;  // item 类型为 &mut i32
     }
     println!("{:?}", vec);  // [2, 4, 6, 8, 10]
 }
 ```
 
-### Collecting Results
+### 收集结果
 ```csharp
-// C# - Processing collections with potential errors
+// C# - 处理可能出错的集合
 public List<int> ParseNumbers(List<string> inputs)
 {
     var results = new List<int>();
@@ -371,37 +371,37 @@ public List<int> ParseNumbers(List<string> inputs)
         {
             results.Add(result);
         }
-        // Silently skip invalid inputs
+        // 静默跳过无效输入
     }
     return results;
 }
 ```
 
 ```rust
-// Rust - Explicit error handling with collect
+// Rust - 使用 collect 进行显式错误处理
 fn parse_numbers(inputs: Vec<String>) -> Result<Vec<i32>, std::num::ParseIntError> {
     inputs.into_iter()
-        .map(|s| s.parse::<i32>())  // Returns Result<i32, ParseIntError>
-        .collect()                  // Collects into Result<Vec<i32>, ParseIntError>
+        .map(|s| s.parse::<i32>())  // 返回 Result<i32, ParseIntError>
+        .collect()                  // 收集为 Result<Vec<i32>, ParseIntError>
 }
 
-// Alternative: Filter out errors
+// 替代方案：过滤掉错误
 fn parse_numbers_filter(inputs: Vec<String>) -> Vec<i32> {
     inputs.into_iter()
-        .filter_map(|s| s.parse::<i32>().ok())  // Keep only Ok values
+        .filter_map(|s| s.parse::<i32>().ok())  // 只保留 Ok 值
         .collect()
 }
 
 fn main() {
     let inputs = vec!["1".to_string(), "2".to_string(), "invalid".to_string(), "4".to_string()];
     
-    // Version that fails on first error
+    // 遇到第一个错误即失败的版本
     match parse_numbers(inputs.clone()) {
         Ok(numbers) => println!("All parsed: {:?}", numbers),
         Err(error) => println!("Parse error: {}", error),
     }
     
-    // Version that skips errors
+    // 跳过错误的版本
     let numbers = parse_numbers_filter(inputs);
     println!("Successfully parsed: {:?}", numbers);  // [1, 2, 4]
 }
@@ -409,12 +409,12 @@ fn main() {
 
 ---
 
-## Exercises
+## 练习
 
 <details>
-<summary><strong>🏋️ Exercise: LINQ to Iterators</strong> (click to expand)</summary>
+<summary><strong>🏋️ 练习：LINQ 转迭代器</strong>（点击展开）</summary>
 
-Translate this C# LINQ query to idiomatic Rust iterators:
+将以下 C# LINQ 查询翻译为地道的 Rust 迭代器：
 
 ```csharp
 var result = students
@@ -425,22 +425,22 @@ var result = students
     .ToList();
 ```
 
-Use this struct:
+使用以下结构体：
 ```rust
 struct Student { name: String, grade: u32 }
 ```
 
-Return a `Vec<String>` of the top 3 students with grade ≥ 90, formatted as `"Name: Grade"`.
+返回成绩 ≥ 90 的前 3 名学生的 `Vec<String>`，格式为 `"Name: Grade"`。
 
 <details>
-<summary>🔑 Solution</summary>
+<summary>🔑 解答</summary>
 
 ```rust
 #[derive(Debug)]
 struct Student { name: String, grade: u32 }
 
 fn top_students(students: &mut [Student]) -> Vec<String> {
-    students.sort_by(|a, b| b.grade.cmp(&a.grade)); // sort descending
+    students.sort_by(|a, b| b.grade.cmp(&a.grade)); // 降序排列
     students.iter()
         .filter(|s| s.grade >= 90)
         .take(3)
@@ -462,11 +462,9 @@ fn main() {
 }
 ```
 
-**Key difference from C#**: Rust iterators are lazy (like LINQ), but `.sort_by()` is eager and in-place — there's no lazy `OrderBy`. You sort first, then chain lazy operations.
+**与 C# 的关键区别**：Rust 迭代器是惰性的（类似 LINQ），但 `.sort_by()` 是立即执行且原地排序的——没有惰性的 `OrderBy`。需要先排序，再链式调用惰性操作。
 
 </details>
 </details>
 
 ***
-
-
