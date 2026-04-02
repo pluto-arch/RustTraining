@@ -1,29 +1,27 @@
-## Functions vs Methods
+## 函数与方法
 
-> **What you'll learn:** Functions and methods in Rust vs C#, the critical distinction between
-> expressions and statements, `if`/`match`/`loop`/`while`/`for` syntax, and how Rust's
-> expression-oriented design eliminates the need for ternary operators.
+> **你将学到：** Rust 与 C# 中的函数和方法、表达式与语句之间的关键区别、`if`/`match`/`loop`/`while`/`for` 语法，以及 Rust 的表达式导向设计如何消除了三元运算符的需求。
 >
-> **Difficulty:** 🟢 Beginner
+> **难度：** 🟢 初级
 
-### C# Function Declaration
+### C# 函数声明
 ```csharp
-// C# - Methods in classes
+// C# - 类中的方法
 public class Calculator
 {
-    // Instance method
+    // 实例方法
     public int Add(int a, int b)
     {
         return a + b;
     }
     
-    // Static method
+    // 静态方法
     public static int Multiply(int a, int b)
     {
         return a * b;
     }
     
-    // Method with ref parameter
+    // 带 ref 参数的方法
     public void Increment(ref int value)
     {
         value++;
@@ -31,18 +29,18 @@ public class Calculator
 }
 ```
 
-### Rust Function Declaration
+### Rust 函数声明
 ```rust
-// Rust - Standalone functions
+// Rust - 独立函数
 fn add(a: i32, b: i32) -> i32 {
-    a + b  // No 'return' needed for final expression
+    a + b  // 最后的表达式无需 'return'
 }
 
 fn multiply(a: i32, b: i32) -> i32 {
-    return a * b;  // Explicit return is also fine
+    return a * b;  // 显式 return 也可以
 }
 
-// Function with mutable reference
+// 带可变引用的函数
 fn increment(value: &mut i32) {
     *value += 1;
 }
@@ -57,7 +55,7 @@ fn main() {
 }
 ```
 
-### Expression vs Statement (Important!)
+### 表达式与语句（重要！）
 
 ```mermaid
 graph LR
@@ -79,47 +77,47 @@ graph LR
 ```
 
 ```csharp
-// C# - Statements vs expressions
+// C# - 语句与表达式
 public int GetValue()
 {
     if (condition)
     {
-        return 42;  // Statement
+        return 42;  // 语句
     }
-    return 0;       // Statement
+    return 0;       // 语句
 }
 ```
 
 ```rust
-// Rust - Everything can be an expression
+// Rust - 一切皆可为表达式
 fn get_value(condition: bool) -> i32 {
     if condition {
-        42  // Expression (no semicolon)
+        42  // 表达式（无分号）
     } else {
-        0   // Expression (no semicolon)
+        0   // 表达式（无分号）
     }
-    // The if-else block itself is an expression that returns a value
+    // if-else 块本身是一个返回值的表达式
 }
 
-// Or even simpler
+// 或者更简洁
 fn get_value_ternary(condition: bool) -> i32 {
     if condition { 42 } else { 0 }
 }
 ```
 
-### Function Parameters and Return Types
+### 函数参数与返回类型
 ```rust
-// No parameters, no return value (returns unit type ())
+// 无参数，无返回值（返回单元类型 ()）
 fn say_hello() {
     println!("Hello!");
 }
 
-// Multiple parameters
+// 多个参数
 fn greet(name: &str, age: u32) {
     println!("{} is {} years old", name, age);
 }
 
-// Multiple return values using tuple
+// 使用元组返回多个值
 fn divide_and_remainder(dividend: i32, divisor: i32) -> (i32, i32) {
     (dividend / divisor, dividend % divisor)
 }
@@ -132,11 +130,11 @@ fn main() {
 
 ***
 
-## Control Flow Basics
+## 控制流基础
 
-### Conditional Statements
+### 条件语句
 ```csharp
-// C# if statements
+// C# if 语句
 int x = 5;
 if (x > 10)
 {
@@ -151,12 +149,12 @@ else
     Console.WriteLine("Small number");
 }
 
-// C# ternary operator
+// C# 三元运算符
 string message = x > 10 ? "Big" : "Small";
 ```
 
 ```rust
-// Rust if expressions
+// Rust if 表达式
 let x = 5;
 if x > 10 {
     println!("Big number");
@@ -166,10 +164,10 @@ if x > 10 {
     println!("Small number");
 }
 
-// Rust if as expression (like ternary)
+// Rust if 作为表达式（类似三元运算符）
 let message = if x > 10 { "Big" } else { "Small" };
 
-// Multiple conditions
+// 多个条件
 let message = if x > 10 {
     "Big"
 } else if x > 5 {
@@ -179,23 +177,23 @@ let message = if x > 10 {
 };
 ```
 
-### Loops
+### 循环
 ```csharp
-// C# loops
-// For loop
+// C# 循环
+// for 循环
 for (int i = 0; i < 5; i++)
 {
     Console.WriteLine(i);
 }
 
-// Foreach loop
+// foreach 循环
 var numbers = new[] { 1, 2, 3, 4, 5 };
 foreach (var num in numbers)
 {
     Console.WriteLine(num);
 }
 
-// While loop
+// while 循环
 int count = 0;
 while (count < 3)
 {
@@ -205,32 +203,32 @@ while (count < 3)
 ```
 
 ```rust
-// Rust loops
-// Range-based for loop
-for i in 0..5 {  // 0 to 4 (exclusive end)
+// Rust 循环
+// 基于范围的 for 循环
+for i in 0..5 {  // 0 到 4（不含结尾）
     println!("{}", i);
 }
 
-// Iterate over collection
+// 遍历集合
 let numbers = vec![1, 2, 3, 4, 5];
-for num in numbers {  // Takes ownership
+for num in numbers {  // 获取所有权
     println!("{}", num);
 }
 
-// Iterate over references (more common)
+// 遍历引用（更常见）
 let numbers = vec![1, 2, 3, 4, 5];
-for num in &numbers {  // Borrows elements
+for num in &numbers {  // 借用元素
     println!("{}", num);
 }
 
-// While loop
+// while 循环
 let mut count = 0;
 while count < 3 {
     println!("{}", count);
     count += 1;
 }
 
-// Infinite loop with break
+// 带 break 的无限循环
 let mut counter = 0;
 loop {
     if counter >= 3 {
@@ -241,9 +239,9 @@ loop {
 }
 ```
 
-### Loop Control
+### 循环控制
 ```csharp
-// C# loop control
+// C# 循环控制
 for (int i = 0; i < 10; i++)
 {
     if (i == 3) continue;
@@ -253,18 +251,18 @@ for (int i = 0; i < 10; i++)
 ```
 
 ```rust
-// Rust loop control
+// Rust 循环控制
 for i in 0..10 {
     if i == 3 { continue; }
     if i == 7 { break; }
     println!("{}", i);
 }
 
-// Loop labels (for nested loops)
+// 循环标签（用于嵌套循环）
 'outer: for i in 0..3 {
     'inner: for j in 0..3 {
         if i == 1 && j == 1 {
-            break 'outer;  // Break out of outer loop
+            break 'outer;  // 跳出外层循环
         }
         println!("i: {}, j: {}", i, j);
     }
@@ -275,12 +273,12 @@ for i in 0..10 {
 
 
 <details>
-<summary><strong>🏋️ Exercise: Temperature Converter</strong> (click to expand)</summary>
+<summary><strong>🏋️ 练习：温度转换器</strong>（点击展开）</summary>
 
-**Challenge**: Convert this C# program to idiomatic Rust. Use expressions, pattern matching, and proper error handling.
+**挑战**：将这个 C# 程序转换为地道的 Rust。使用表达式、模式匹配和适当的错误处理。
 
 ```csharp
-// C# — convert this to Rust
+// C# — 将此转换为 Rust
 public static double Convert(double value, string from, string to)
 {
     double celsius = from switch
@@ -301,7 +299,7 @@ public static double Convert(double value, string from, string to)
 ```
 
 <details>
-<summary>🔑 Solution</summary>
+<summary>🔑 解答</summary>
 
 ```rust
 #[derive(Debug, Clone, Copy)]
@@ -337,12 +335,10 @@ fn main() -> Result<(), String> {
 }
 ```
 
-**Key takeaways**:
-- Enums replace magic strings — exhaustive matching catches missing units at compile time
-- `Result<T, E>` replaces exceptions — the caller sees possible failures in the signature
-- `match` is an expression that returns a value — no `return` statements needed
+**关键要点**：
+- 枚举取代魔法字符串——穷举匹配在编译时捕获缺失的单元
+- `Result<T, E>` 取代异常——调用方在签名中即可看到可能的失败
+- `match` 是一个返回值的表达式——无需 `return` 语句
 
 </details>
 </details>
-
-
