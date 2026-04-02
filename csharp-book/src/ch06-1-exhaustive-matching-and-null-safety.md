@@ -1,13 +1,13 @@
-## Exhaustive Pattern Matching: Compiler Guarantees vs Runtime Errors
+## 穷举模式匹配：编译器保证 vs 运行时错误
 
-> **What you'll learn:** Why C# `switch` expressions silently miss cases while Rust's `match` catches them at compile time,
-> `Option<T>` vs `Nullable<T>` for null safety, and custom error types with `Result<T, E>`.
+> **本章要点：** 为什么 C# 的 `switch` 表达式会悄悄遗漏分支，而 Rust 的 `match` 在编译时就能捕获；
+> `Option<T>` 与 `Nullable<T>` 的空安全对比，以及使用 `Result<T, E>` 的自定义错误类型。
 >
-> **Difficulty:** 🟡 Intermediate
+> **难度：** 🟡 中级
 
-### C# Switch Expressions - Still Incomplete
+### C# Switch 表达式——仍不完整
 ```csharp
-// C# switch expressions look exhaustive but aren't guaranteed
+// C# switch 表达式看起来穷举，但并不能保证
 public enum HttpStatus { Ok, NotFound, ServerError, Unauthorized }
 
 public string HandleResponse(HttpStatus status) => status switch
@@ -15,11 +15,11 @@ public string HandleResponse(HttpStatus status) => status switch
     HttpStatus.Ok => "Success",
     HttpStatus.NotFound => "Resource not found",
     HttpStatus.ServerError => "Internal error",
-    // Missing Unauthorized case — compiles with warning CS8524, but NOT an error!
-    // Runtime: SwitchExpressionException if status is Unauthorized
+    // 缺少 Unauthorized 分支 — 编译时产生警告 CS8524，但不是错误！
+    // 运行时：如果 status 为 Unauthorized，会抛出 SwitchExpressionException
 };
 
-// Even with nullable warnings, this compiles:
+// 即使有可空警告，这段代码也能编译：
 public class User 
 {
     public string Name { get; set; }
@@ -30,24 +30,24 @@ public string ProcessUser(User? user) => user switch
 {
     { IsActive: true } => $"Active: {user.Name}",
     { IsActive: false } => $"Inactive: {user.Name}",
-    // Missing null case — compiler warning CS8655, but NOT an error!
-    // Runtime: SwitchExpressionException when user is null
+    // 缺少 null 分支 — 编译器警告 CS8655，但不是错误！
+    // 运行时：当 user 为 null 时，抛出 SwitchExpressionException
 };
 ```
 
 ```csharp
-// Adding an enum variant later doesn't break compilation of existing switches
+// 后来添加枚举变体不会破坏已有 switch 的编译
 public enum HttpStatus 
 { 
     Ok, 
     NotFound, 
     ServerError, 
     Unauthorized,
-    Forbidden  // Adding this produces another CS8524 warning but doesn't break compilation!
+    Forbidden  // 添加这个只会产生额外的 CS8524 警告，不会破坏编译！
 }
 ```
 
-### Rust Pattern Matching - True Exhaustiveness
+### Rust 模式匹配——真正的穷举性
 ```rust
 #[derive(Debug)]
 enum HttpStatus {
@@ -63,41 +63,41 @@ fn handle_response(status: HttpStatus) -> &'static str {
         HttpStatus::NotFound => "Resource not found", 
         HttpStatus::ServerError => "Internal error",
         HttpStatus::Unauthorized => "Authentication required",
-        // Compiler ERROR if any case is missing!
-        // This literally will not compile
+        // 如果缺少任何分支，编译器会报错！
+        // 这段代码字面上无法编译通过
     }
 }
 
-// Adding a new variant breaks compilation everywhere it's used
+// 添加新变体会在所有使用处破坏编译
 #[derive(Debug)]
 enum HttpStatus {
     Ok,
     NotFound,
     ServerError, 
     Unauthorized,
-    Forbidden,  // Adding this breaks compilation in handle_response()
+    Forbidden,  // 添加这个会导致 handle_response() 编译失败
 }
-// The compiler forces you to handle ALL cases
+// 编译器强制你处理所有情况
 
-// Option<T> pattern matching is also exhaustive
+// Option<T> 的模式匹配同样是穷举的
 fn process_optional_value(value: Option<i32>) -> String {
     match value {
         Some(n) => format!("Got value: {}", n),
         None => "No value".to_string(),
-        // Forgetting either case = compilation error
+        // 遗漏任何分支 = 编译错误
     }
 }
 ```
 
 ```mermaid
 graph TD
-    subgraph "C# Pattern Matching Limitations"
-        CS_SWITCH["switch expression"]
-        CS_WARNING["⚠️ Compiler warnings only"]
-        CS_COMPILE["✅ Compiles successfully"]
-        CS_RUNTIME["💥 Runtime exceptions"]
-        CS_DEPLOY["❌ Bugs reach production"]
-        CS_SILENT["😰 Silent failures on enum changes"]
+    subgraph "C# 模式匹配的局限"
+        CS_SWITCH["switch 表达式"]
+        CS_WARNING["⚠️ 仅编译器警告"]
+        CS_COMPILE["✅ 编译成功"]
+        CS_RUNTIME["💥 运行时异常"]
+        CS_DEPLOY["❌ 缺陷进入生产环境"]
+        CS_SILENT["😰 枚举变更时的静默失败"]
         
         CS_SWITCH --> CS_WARNING
         CS_WARNING --> CS_COMPILE
@@ -106,13 +106,13 @@ graph TD
         CS_SWITCH --> CS_SILENT
     end
     
-    subgraph "Rust Exhaustive Matching"
-        RUST_MATCH["match expression"]
-        RUST_ERROR["🛑 Compilation fails"]
-        RUST_FIX["✅ Must handle all cases"]
-        RUST_SAFE["✅ Zero runtime surprises"]
-        RUST_EVOLUTION["🔄 Enum changes break compilation"]
-        RUST_REFACTOR["🛠️ Forced refactoring"]
+    subgraph "Rust 穷举匹配"
+        RUST_MATCH["match 表达式"]
+        RUST_ERROR["🛑 编译失败"]
+        RUST_FIX["✅ 必须处理所有情况"]
+        RUST_SAFE["✅ 零运行时意外"]
+        RUST_EVOLUTION["🔄 枚举变更破坏编译"]
+        RUST_REFACTOR["🛠️ 强制重构"]
         
         RUST_MATCH --> RUST_ERROR
         RUST_ERROR --> RUST_FIX
@@ -130,20 +130,20 @@ graph TD
 
 ***
 
-## Null Safety: `Nullable<T>` vs `Option<T>`
+## 空安全：`Nullable<T>` 与 `Option<T>`
 
-### C# Null Handling Evolution
+### C# 空处理的演进
 ```csharp
-// C# - Traditional null handling (error-prone)
+// C# - 传统空处理（容易出错）
 public class User
 {
-    public string Name { get; set; }  // Can be null!
-    public string Email { get; set; } // Can be null!
+    public string Name { get; set; }  // 可以为 null！
+    public string Email { get; set; } // 可以为 null！
 }
 
 public string GetUserDisplayName(User user)
 {
-    if (user?.Name != null)  // Null conditional operator
+    if (user?.Name != null)  // 空条件运算符
     {
         return user.Name;
     }
@@ -152,14 +152,14 @@ public string GetUserDisplayName(User user)
 ```
 
 ```csharp
-// C# 8+ Nullable Reference Types
+// C# 8+ 可空引用类型
 public class User
 {
-    public string Name { get; set; }    // Non-nullable
-    public string? Email { get; set; }  // Explicitly nullable
+    public string Name { get; set; }    // 非空
+    public string? Email { get; set; }  // 明确可空
 }
 
-// C# Nullable<T> for value types
+// C# Nullable<T> 用于值类型
 int? maybeNumber = GetNumber();
 if (maybeNumber.HasValue)
 {
@@ -167,18 +167,18 @@ if (maybeNumber.HasValue)
 }
 ```
 
-### Rust `Option<T>` System
+### Rust `Option<T>` 系统
 ```rust
-// Rust - Explicit null handling with Option<T>
+// Rust - 使用 Option<T> 进行显式空处理
 #[derive(Debug)]
 pub struct User {
-    name: String,           // Never null
-    email: Option<String>,  // Explicitly optional
+    name: String,           // 永远不为 null
+    email: Option<String>,  // 明确为可选
 }
 
 impl User {
     pub fn get_display_name(&self) -> &str {
-        &self.name  // No null check needed - guaranteed to exist
+        &self.name  // 无需空检查 — 保证存在
     }
     
     pub fn get_email_or_default(&self) -> String {
@@ -189,41 +189,41 @@ impl User {
     }
 }
 
-// Pattern matching forces handling of None case
+// 模式匹配强制处理 None 情况
 fn handle_optional_user(user: Option<User>) {
     match user {
         Some(u) => println!("User: {}", u.get_display_name()),
         None => println!("No user found"),
-        // Compiler error if None case is not handled!
+        // 如果不处理 None 情况，编译器会报错！
     }
 }
 ```
 
 ```mermaid
 graph TD
-    subgraph "C# Null Handling Evolution"
-        CS_NULL["Traditional: string name<br/>[ERROR] Can be null"]
-        CS_NULLABLE["Nullable<T>: int? value<br/>[OK] Explicit for value types"]
-        CS_NRT["Nullable Reference Types<br/>string? name<br/>[WARNING] Compile-time warnings only"]
+    subgraph "C# 空处理的演进"
+        CS_NULL["传统方式：string name<br/>[错误] 可以为 null"]
+        CS_NULLABLE["Nullable<T>：int? value<br/>[正确] 值类型的明确表示"]
+        CS_NRT["可空引用类型<br/>string? name<br/>[警告] 仅编译时警告"]
         
-        CS_RUNTIME["Runtime NullReferenceException<br/>[ERROR] Can still crash"]
+        CS_RUNTIME["运行时 NullReferenceException<br/>[错误] 仍可能崩溃"]
         CS_NULL --> CS_RUNTIME
         CS_NRT -.-> CS_RUNTIME
         
-        CS_CHECKS["Manual null checks<br/>if (obj?.Property != null)"]
+        CS_CHECKS["手动空检查<br/>if (obj?.Property != null)"]
     end
     
-    subgraph "Rust Option<T> System"
+    subgraph "Rust Option<T> 系统"
         RUST_OPTION["Option<T><br/>Some(value) | None"]
-        RUST_FORCE["Compiler forces handling<br/>[OK] Cannot ignore None"]
-        RUST_MATCH["Pattern matching<br/>match option { ... }"]
-        RUST_METHODS["Rich API<br/>.map(), .unwrap_or(), .and_then()"]
+        RUST_FORCE["编译器强制处理<br/>[正确] 不能忽略 None"]
+        RUST_MATCH["模式匹配<br/>match option { ... }"]
+        RUST_METHODS["丰富的 API<br/>.map()、.unwrap_or()、.and_then()"]
         
         RUST_OPTION --> RUST_FORCE
         RUST_FORCE --> RUST_MATCH
         RUST_FORCE --> RUST_METHODS
         
-        RUST_SAFE["Compile-time null safety<br/>[OK] No null pointer exceptions"]
+        RUST_SAFE["编译时空安全<br/>[正确] 无空指针异常"]
         RUST_MATCH --> RUST_SAFE
         RUST_METHODS --> RUST_SAFE
     end
@@ -254,9 +254,9 @@ fn describe_point(point: Point) -> String {
 }
 ```
 
-### Option and Result Types
+### Option 和 Result 类型
 ```csharp
-// C# nullable reference types (C# 8+)
+// C# 可空引用类型（C# 8+）
 public class PersonService
 {
     private Dictionary<int, string> people = new();
@@ -271,7 +271,7 @@ public class PersonService
         return FindPerson(id) ?? "Unknown";
     }
     
-    // Exception-based error handling
+    // 基于异常的错误处理
     public void SavePerson(int id, string name)
     {
         if (string.IsNullOrEmpty(name))
@@ -285,7 +285,7 @@ public class PersonService
 ```rust
 use std::collections::HashMap;
 
-// Rust uses Option<T> instead of null
+// Rust 使用 Option<T> 而非 null
 struct PersonService {
     people: HashMap<i32, String>,
 }
@@ -297,12 +297,12 @@ impl PersonService {
         }
     }
     
-    // Returns Option<T> - no null!
+    // 返回 Option<T> — 没有 null！
     fn find_person(&self, id: i32) -> Option<&String> {
         self.people.get(&id)
     }
     
-    // Pattern matching on Option
+    // Option 上的模式匹配
     fn get_person_or_default(&self, id: i32) -> String {
         match self.find_person(id) {
             Some(name) => name.clone(),
@@ -310,14 +310,14 @@ impl PersonService {
         }
     }
     
-    // Using Option methods (more functional style)
+    // 使用 Option 方法（更函数式的风格）
     fn get_person_or_default_functional(&self, id: i32) -> String {
         self.find_person(id)
             .map(|name| name.clone())
             .unwrap_or_else(|| "Unknown".to_string())
     }
     
-    // Result<T, E> for error handling
+    // 使用 Result<T, E> 进行错误处理
     fn save_person(&mut self, id: i32, name: String) -> Result<(), String> {
         if name.is_empty() {
             return Err("Name cannot be empty".to_string());
@@ -327,7 +327,7 @@ impl PersonService {
         Ok(())
     }
     
-    // Chaining operations
+    // 链式操作
     fn get_person_length(&self, id: i32) -> Option<usize> {
         self.find_person(id).map(|name| name.len())
     }
@@ -336,27 +336,27 @@ impl PersonService {
 fn main() {
     let mut service = PersonService::new();
     
-    // Handle Result
+    // 处理 Result
     match service.save_person(1, "Alice".to_string()) {
         Ok(()) => println!("Person saved successfully"),
         Err(error) => println!("Error: {}", error),
     }
     
-    // Handle Option
+    // 处理 Option
     match service.find_person(1) {
         Some(name) => println!("Found: {}", name),
         None => println!("Person not found"),
     }
     
-    // Functional style with Option
+    // 函数式风格使用 Option
     let name_length = service.get_person_length(1)
         .unwrap_or(0);
     println!("Name length: {}", name_length);
     
-    // Question mark operator for early returns
+    // 问号运算符用于提前返回
     fn try_operation(service: &mut PersonService) -> Result<String, String> {
-        service.save_person(2, "Bob".to_string())?; // Early return if error
-        let name = service.find_person(2).ok_or("Person not found")?; // Convert Option to Result
+        service.save_person(2, "Bob".to_string())?; // 出错时提前返回
+        let name = service.find_person(2).ok_or("Person not found")?; // 将 Option 转为 Result
         Ok(format!("Hello, {}", name))
     }
     
@@ -367,9 +367,9 @@ fn main() {
 }
 ```
 
-### Custom Error Types
+### 自定义错误类型
 ```rust
-// Define custom error enum
+// 定义自定义错误枚举
 #[derive(Debug)]
 enum PersonError {
     NotFound(i32),
@@ -389,14 +389,14 @@ impl std::fmt::Display for PersonError {
 
 impl std::error::Error for PersonError {}
 
-// Enhanced PersonService with custom errors
+// 使用自定义错误增强 PersonService
 impl PersonService {
     fn save_person_enhanced(&mut self, id: i32, name: String) -> Result<(), PersonError> {
         if name.is_empty() || name.len() > 50 {
             return Err(PersonError::InvalidName(name));
         }
         
-        // Simulate database operation that might fail
+        // 模拟可能失败的数据库操作
         if id < 0 {
             return Err(PersonError::DatabaseError("Negative IDs not allowed".to_string()));
         }
@@ -413,7 +413,7 @@ impl PersonService {
 fn demo_error_handling() {
     let mut service = PersonService::new();
     
-    // Handle different error types
+    // 处理不同的错误类型
     match service.save_person_enhanced(-1, "Invalid".to_string()) {
         Ok(()) => println!("Success"),
         Err(PersonError::NotFound(id)) => println!("Not found: {}", id),
@@ -425,12 +425,12 @@ fn demo_error_handling() {
 
 ---
 
-## Exercises
+## 练习
 
 <details>
-<summary><strong>🏋️ Exercise: Option Combinators</strong> (click to expand)</summary>
+<summary><strong>🏋️ 练习：Option 组合子</strong>（点击展开）</summary>
 
-Rewrite this deeply nested C# null-checking code using Rust `Option` combinators (`and_then`, `map`, `unwrap_or`):
+使用 Rust 的 `Option` 组合子（`and_then`、`map`、`unwrap_or`）重写以下深度嵌套的 C# 空检查代码：
 
 ```csharp
 string GetCityName(User? user)
@@ -443,16 +443,16 @@ string GetCityName(User? user)
 }
 ```
 
-Use these Rust types:
+使用这些 Rust 类型：
 ```rust
 struct User { address: Option<Address> }
 struct Address { city: Option<String> }
 ```
 
-Write it as a **single expression** with no `if let` or `match`.
+用**单个表达式**实现，不使用 `if let` 或 `match`。
 
 <details>
-<summary>🔑 Solution</summary>
+<summary>�� 解答</summary>
 
 ```rust
 struct User { address: Option<Address> }
@@ -477,11 +477,10 @@ fn main() {
 }
 ```
 
-**Key insight**: `and_then` is Rust's `?.` operator for `Option`. Each step returns `Option`, and the chain short-circuits on `None` — exactly like C#'s null-conditional operator `?.`, but explicit and type-safe.
+**关键洞察**：`and_then` 是 Rust 中 `Option` 的 `?.` 运算符。每步返回 `Option`，链在 `None` 时短路——
+这与 C# 的空条件运算符 `?.` 完全一样，但显式且类型安全。
 
 </details>
 </details>
 
 ***
-
-

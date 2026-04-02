@@ -1,13 +1,13 @@
-## Package Management: Cargo vs NuGet
+## 包管理：Cargo vs NuGet
 
-> **What you'll learn:** `Cargo.toml` vs `.csproj`, version specifiers, `Cargo.lock`,
-> feature flags for conditional compilation, and common Cargo commands mapped to their NuGet/dotnet equivalents.
+> **你将学到：** `Cargo.toml` vs `.csproj`，版本说明符，`Cargo.lock`，
+> 用于条件编译的特性标志，以及常用 Cargo 命令与 NuGet/dotnet 等价命令的对照。
 >
-> **Difficulty:** 🟢 Beginner
+> **难度：** 🟢 初级
 
-### Dependency Declaration
+### 依赖声明
 
-#### C# NuGet Dependencies
+#### C# NuGet 依赖
 ```xml
 <!-- MyApp.csproj -->
 <Project Sdk="Microsoft.NET.Sdk">
@@ -23,7 +23,7 @@
 </Project>
 ```
 
-#### Rust Cargo Dependencies
+#### Rust Cargo 依赖
 ```toml
 # Cargo.toml
 [package]
@@ -32,28 +32,28 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serde_json = "1.0"               # From crates.io (like NuGet)
-serde = { version = "1.0", features = ["derive"] }  # With features
+serde_json = "1.0"               # 来自 crates.io（类似 NuGet）
+serde = { version = "1.0", features = ["derive"] }  # 带特性
 log = "0.4"
 tokio = { version = "1.0", features = ["full"] }
 
-# Local dependencies (like ProjectReference)
+# 本地依赖（类似 ProjectReference）
 my_library = { path = "../my_library" }
 
-# Git dependencies
+# Git 依赖
 my_git_crate = { git = "https://github.com/user/repo" }
 
-# Development dependencies (like test packages)
+# 开发依赖（类似测试包）
 [dev-dependencies]
-criterion = "0.5"               # Benchmarking
-proptest = "1.0"               # Property testing
+criterion = "0.5"               # 基准测试
+proptest = "1.0"               # 属性测试
 ```
 
-### Version Management
+### 版本管理
 
-#### C# Package Versioning
+#### C# 包版本管理
 ```xml
-<!-- Centralized package management (Directory.Packages.props) -->
+<!-- 集中式包管理（Directory.Packages.props） -->
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
@@ -63,29 +63,29 @@ proptest = "1.0"               # Property testing
   <PackageVersion Include="Serilog" Version="3.0.1" />
 </Project>
 
-<!-- packages.lock.json for reproducible builds -->
+<!-- packages.lock.json 用于可重现构建 -->
 ```
 
-#### Rust Version Management
+#### Rust 版本管理
 ```toml
-# Cargo.toml - Semantic versioning
+# Cargo.toml - 语义化版本
 [dependencies]
-serde = "1.0"        # Compatible with 1.x.x (>=1.0.0, <2.0.0)
-log = "0.4.17"       # Compatible with 0.4.x (>=0.4.17, <0.5.0)
-regex = "=1.5.4"     # Exact version
-chrono = "^0.4"      # Caret requirements (default)
-uuid = "~1.3.0"      # Tilde requirements (>=1.3.0, <1.4.0)
+serde = "1.0"        # 兼容 1.x.x（>=1.0.0, <2.0.0）
+log = "0.4.17"       # 兼容 0.4.x（>=0.4.17, <0.5.0）
+regex = "=1.5.4"     # 精确版本
+chrono = "^0.4"      # 插入号要求（默认）
+uuid = "~1.3.0"      # 波浪号要求（>=1.3.0, <1.4.0）
 
-# Cargo.lock - Exact versions for reproducible builds (auto-generated)
+# Cargo.lock - 可重现构建的精确版本（自动生成）
 [[package]]
 name = "serde"
 version = "1.0.163"
-# ... exact dependency tree
+# ... 精确的依赖树
 ```
 
-### Package Sources
+### 包来源
 
-#### C# Package Sources
+#### C# 包来源
 ```xml
 <!-- nuget.config -->
 <configuration>
@@ -96,7 +96,7 @@ version = "1.0.163"
 </configuration>
 ```
 
-#### Rust Package Sources
+#### Rust 包来源
 ```toml
 # .cargo/config.toml
 [source.crates-io]
@@ -105,51 +105,51 @@ replace-with = "my-awesome-registry"
 [source.my-awesome-registry]
 registry = "https://my-intranet:8080/index"
 
-# Alternative registries
+# 替代注册表
 [registries]
 my-registry = { index = "https://my-intranet:8080/index" }
 
-# In Cargo.toml
+# 在 Cargo.toml 中
 [dependencies]
 my_crate = { version = "1.0", registry = "my-registry" }
 ```
 
-### Common Commands Comparison
+### 常用命令对照
 
-| Task | C# Command | Rust Command |
+| 任务 | C# 命令 | Rust 命令 |
 |------|------------|-------------|
-| Restore packages | `dotnet restore` | `cargo fetch` |
-| Add package | `dotnet add package Newtonsoft.Json` | `cargo add serde_json` |
-| Remove package | `dotnet remove package Newtonsoft.Json` | `cargo remove serde_json` |
-| Update packages | `dotnet update` | `cargo update` |
-| List packages | `dotnet list package` | `cargo tree` |
-| Audit security | `dotnet list package --vulnerable` | `cargo audit` |
-| Clean build | `dotnet clean` | `cargo clean` |
+| 还原包 | `dotnet restore` | `cargo fetch` |
+| 添加包 | `dotnet add package Newtonsoft.Json` | `cargo add serde_json` |
+| 移除包 | `dotnet remove package Newtonsoft.Json` | `cargo remove serde_json` |
+| 更新包 | `dotnet update` | `cargo update` |
+| 列出包 | `dotnet list package` | `cargo tree` |
+| 安全审计 | `dotnet list package --vulnerable` | `cargo audit` |
+| 清理构建 | `dotnet clean` | `cargo clean` |
 
-### Features: Conditional Compilation
+### 特性：条件编译
 
-#### C# Conditional Compilation
+#### C# 条件编译
 ```csharp
 #if DEBUG
-    Console.WriteLine("Debug mode");
+    Console.WriteLine("调试模式");
 #elif RELEASE
-    Console.WriteLine("Release mode");
+    Console.WriteLine("发布模式");
 #endif
 
-// Project file features
+// 项目文件特性
 <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
 </PropertyGroup>
 ```
 
-#### Rust Feature Gates
+#### Rust 特性门控
 ```toml
 # Cargo.toml
 [features]
-default = ["json"]              # Default features
-json = ["serde_json"]          # Feature that enables serde_json
-xml = ["serde_xml"]            # Alternative serialization
-advanced = ["json", "xml"]     # Composite feature
+default = ["json"]              # 默认特性
+json = ["serde_json"]          # 启用 serde_json 的特性
+xml = ["serde_xml"]            # 替代序列化
+advanced = ["json", "xml"]     # 组合特性
 
 [dependencies]
 serde_json = { version = "1.0", optional = true }
@@ -157,7 +157,7 @@ serde_xml = { version = "0.4", optional = true }
 ```
 
 ```rust
-// Conditional compilation based on features
+// 基于特性的条件编译
 #[cfg(feature = "json")]
 use serde_json;
 
@@ -172,28 +172,28 @@ pub fn serialize_data(data: &MyStruct) -> String {
     return serde_xml::to_string(data).unwrap();
     
     #[cfg(not(any(feature = "json", feature = "xml")))]
-    return "No serialization feature enabled".to_string();
+    return "未启用序列化特性".to_string();
 }
 ```
 
-### Using External Crates
+### 使用外部 Crate
 
-#### Popular Crates for C# Developers
+#### 面向 C# 开发者的常用 Crate
 
-| C# Library | Rust Crate | Purpose |
+| C# 库 | Rust Crate | 用途 |
 |------------|------------|---------|
-| System.Text.Json / Newtonsoft.Json | `serde_json` | JSON serialization |
-| HttpClient | `reqwest` | HTTP client |
-| Entity Framework | `diesel` / `sqlx` | ORM / SQL toolkit |
-| NLog/Serilog | `log` + `env_logger` | Logging |
-| xUnit/NUnit | Built-in `#[test]` | Unit testing |
-| Moq | `mockall` | Mocking |
-| Flurl | `url` | URL manipulation |
-| Polly | `tower` | Resilience patterns |
+| System.Text.Json / Newtonsoft.Json | `serde_json` | JSON 序列化 |
+| HttpClient | `reqwest` | HTTP 客户端 |
+| Entity Framework | `diesel` / `sqlx` | ORM / SQL 工具包 |
+| NLog/Serilog | `log` + `env_logger` | 日志记录 |
+| xUnit/NUnit | 内置 `#[test]` | 单元测试 |
+| Moq | `mockall` | 模拟（Mocking） |
+| Flurl | `url` | URL 操作 |
+| Polly | `tower` | 弹性模式 |
 
-#### Example: HTTP Client Migration
+#### 示例：HTTP 客户端迁移
 ```csharp
-// C# HttpClient usage
+// C# HttpClient 用法
 public class ApiClient
 {
     private readonly HttpClient _httpClient;
@@ -208,7 +208,7 @@ public class ApiClient
 ```
 
 ```rust
-// Rust reqwest usage
+// Rust reqwest 用法
 use reqwest;
 use serde::Deserialize;
 
@@ -237,5 +237,3 @@ impl ApiClient {
 ```
 
 ***
-
-

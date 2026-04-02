@@ -1,11 +1,11 @@
-## Constructor Patterns
+## 构造器模式
 
-> **What you'll learn:** How to create Rust structs without traditional constructors — `new()` conventions,
-> the `Default` trait, factory methods, and the builder pattern for complex initialization.
+> **本章要点：** 如何在 Rust 中创建结构体而无需传统构造器 — `new()` 约定、
+> `Default` trait、工厂方法，以及用于复杂初始化的构建器模式。
 >
-> **Difficulty:** 🟢 Beginner
+> **难度：** 🟢 初级
 
-### C# Constructor Patterns
+### C# 构造器模式
 ```csharp
 public class Configuration
 {
@@ -13,7 +13,7 @@ public class Configuration
     public int MaxConnections { get; set; }
     public bool EnableLogging { get; set; }
     
-    // Default constructor
+    // 默认构造器
     public Configuration()
     {
         DatabaseUrl = "localhost";
@@ -21,7 +21,7 @@ public class Configuration
         EnableLogging = false;
     }
     
-    // Parameterized constructor
+    // 带参数的构造器
     public Configuration(string databaseUrl, int maxConnections)
     {
         DatabaseUrl = databaseUrl;
@@ -29,7 +29,7 @@ public class Configuration
         EnableLogging = false;
     }
     
-    // Factory method
+    // 工厂方法
     public static Configuration ForProduction()
     {
         return new Configuration("prod.db.server", 100)
@@ -40,7 +40,7 @@ public class Configuration
 }
 ```
 
-### Rust Constructor Patterns
+### Rust 构造器模式
 ```rust
 #[derive(Debug)]
 pub struct Configuration {
@@ -50,7 +50,7 @@ pub struct Configuration {
 }
 
 impl Configuration {
-    // Default constructor
+    // 默认构造器
     pub fn new() -> Configuration {
         Configuration {
             database_url: "localhost".to_string(),
@@ -59,7 +59,7 @@ impl Configuration {
         }
     }
     
-    // Parameterized constructor
+    // 带参数的构造器
     pub fn with_database(database_url: String, max_connections: u32) -> Configuration {
         Configuration {
             database_url,
@@ -68,7 +68,7 @@ impl Configuration {
         }
     }
     
-    // Factory method
+    // 工厂方法
     pub fn for_production() -> Configuration {
         Configuration {
             database_url: "prod.db.server".to_string(),
@@ -77,10 +77,10 @@ impl Configuration {
         }
     }
     
-    // Builder pattern method
+    // 构建器模式方法
     pub fn enable_logging(mut self) -> Configuration {
         self.enable_logging = true;
-        self  // Return self for chaining
+        self  // 返回 self 以支持链式调用
     }
     
     pub fn max_connections(mut self, count: u32) -> Configuration {
@@ -89,7 +89,7 @@ impl Configuration {
     }
 }
 
-// Default trait implementation
+// Default trait 实现
 impl Default for Configuration {
     fn default() -> Self {
         Self::new()
@@ -97,26 +97,26 @@ impl Default for Configuration {
 }
 
 fn main() {
-    // Different construction patterns
+    // 不同的构造模式
     let config1 = Configuration::new();
     let config2 = Configuration::with_database("localhost:5432".to_string(), 20);
     let config3 = Configuration::for_production();
     
-    // Builder pattern
+    // 构建器模式
     let config4 = Configuration::new()
         .enable_logging()
         .max_connections(50);
     
-    // Using Default trait
+    // 使用 Default trait
     let config5 = Configuration::default();
     
     println!("{:?}", config4);
 }
 ```
 
-### Builder Pattern Implementation
+### 构建器模式实现
 ```rust
-// More complex builder pattern
+// 更复杂的构建器模式
 #[derive(Debug)]
 pub struct DatabaseConfig {
     host: String,
@@ -211,19 +211,19 @@ fn main() {
 
 ---
 
-## Exercises
+## 练习
 
 <details>
-<summary><strong>🏋️ Exercise: Builder with Validation</strong> (click to expand)</summary>
+<summary><strong>🏋️ 练习：带验证的构建器</strong>（点击展开）</summary>
 
-Create an `EmailBuilder` that:
-1. Requires `to` and `subject` (builder won't compile without them — use a typestate or validate in `build()`)
-2. Has optional `body` and `cc` (Vec of addresses)
-3. `build()` returns `Result<Email, String>` — rejects empty `to` or `subject`
-4. Write tests proving invalid inputs are rejected
+创建一个 `EmailBuilder`：
+1. 要求提供 `to` 和 `subject`（可通过类型状态在编译时强制，或在 `build()` 中验证）
+2. `body` 和 `cc`（地址列表）为可选项
+3. `build()` 返回 `Result<Email, String>` — 拒绝空的 `to` 或 `subject`
+4. 编写测试，证明无效输入会被拒绝
 
 <details>
-<summary>🔑 Solution</summary>
+<summary>🔑 解答</summary>
 
 ```rust
 #[derive(Debug)]
@@ -289,5 +289,3 @@ mod tests {
 </details>
 
 ***
-
-
